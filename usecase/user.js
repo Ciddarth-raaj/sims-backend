@@ -9,7 +9,12 @@ class UserUsecase {
     return new Promise(async (resolve, reject) => {
       try {
         const resp = await this.userRepo.login(username, password);
-        resolve(resp);
+        if (resp.length > 0) {
+          resolve({ code: 200, data: resp[0] });
+        } else {
+          resolve({ code: 404, msg: "Access Denied !" });
+        }
+        // resolve(resp);
       } catch (err) {
         reject(err);
       }

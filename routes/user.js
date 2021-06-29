@@ -39,6 +39,7 @@ class UserRoutes {
 
         res.json(getUserDetails);
       } catch (err) {
+        console.log(err);
         respondError(res, err);
       }
 

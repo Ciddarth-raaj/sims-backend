@@ -23,11 +23,7 @@ class UserRepository {
             reject(err);
             return;
           }
-          if (docs.length > 0) {
-            resolve({ code: 200, data: docs[0] });
-          } else {
-            resolve({ code: 404, msg: "Access Denied !" });
-          }
+          resolve(docs);
         }
       );
     });
