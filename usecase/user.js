@@ -10,7 +10,7 @@ class UserUsecase {
       try {
         const resp = await this.userRepo.login(username, password);
         if (resp.length > 0) {
-          resolve({ code: 200, data: resp[0] });
+          resolve({ code: 200, ...resp[0] });
         } else {
           resolve({ code: 404, msg: "Access Denied !" });
         }
