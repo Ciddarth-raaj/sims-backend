@@ -1,8 +1,8 @@
 global.env =
-  process.env.NODE_ENV === undefined ? "development" : process.env.NODE_ENV
+  process.env.NODE_ENV === undefined ? "development" : process.env.NODE_ENV;
 global.isDev = () => {
-  return global.env === "development"
-}
+  return global.env === "development";
+};
 
 const PORT = process.env.PORT === undefined ? 8080 : process.env.PORT;
 
@@ -85,22 +85,20 @@ class Server {
   }
 
   initRepositories() {
-    this.exampleRepo = require("./repository/example")(this.mysql.connection);
+    this.userRepo = require("./repository/user")(this.mysql.connection);
   }
 
   initUsecases() {
-    this.exampleUsecase = require("./usecase/example")(this.exampleRepo);
+    this.userUsecase = require("./usecase/user")(this.userRepo);
   }
 
   initRoutes() {
     const authMiddleWare = require("./middlewares/auth");
     app.use(authMiddleWare);
 
-    const exampleRouter = require("./routes/example")(this.exampleUsecase);
-    //const exampleRouter = require('./routes/example')( this.example_controller );
+    const userRouter = require("./routes/user")(this.userUsecase);
 
-    app.use("/example", exampleRouter.getRouter());
-    //app.use('/example', displayRouter.getRouter());
+    app.use("/user", userRouter.getRouter());
   }
 
   onClose() {
@@ -126,13 +124,13 @@ const server = new Server();
 ].forEach((eventType) => {
   process.on(eventType, (err = "") => {
     process.removeAllListeners();
-    
+
     let error = err.toString();
 
     if (err.stack) {
       error = err.stack;
     }
-    
+
     logger.Log({
       level: logger.LEVEL.ERROR,
       component: "SERVER",

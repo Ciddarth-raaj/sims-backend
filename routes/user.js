@@ -1,10 +1,10 @@
 const router = require("express").Router();
 const Joi = require("@hapi/joi");
-const respondError = require("../utils/http")
+const respondError = require("../utils/http");
 
-class ExampleRoutes {
-  constructor(usecase) {
-    this.usecase = usecase;
+class UserRoutes {
+  constructor(userUsecase) {
+    this.userUsecase = userUsecase;
 
     this.init();
   }
@@ -32,14 +32,14 @@ class ExampleRoutes {
           throw isValid.error;
         }
 
-        const getUserDetails = await this.usecase.login(
+        const getUserDetails = await this.userUsecase.login(
           req.body.username,
           req.body.password
         );
 
         res.json(getUserDetails);
       } catch (err) {
-        respondError(res, err)
+        respondError(res, err);
       }
 
       res.end();
@@ -56,6 +56,6 @@ class ExampleRoutes {
   }
 }
 
-module.exports = (usecase) => {
-  return new ExampleRoutes(usecase);
+module.exports = (userUsecase) => {
+  return new UserRoutes(userUsecase);
 };
