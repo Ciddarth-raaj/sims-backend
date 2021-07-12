@@ -26,6 +26,7 @@ class Server {
 
       this.initRepositories();
       this.initUsecases();
+      this.initServices();
       this.initExpress();
       this.initRoutes();
       this.initServer();
@@ -82,6 +83,12 @@ class Server {
         reject(err);
       }
     });
+  }
+
+  initServices() {
+    this.synker = require("./services/synker")(this.doctorUsecase);
+    // this.synker._sync(); //Use for immediate doctor details sync
+    this.synker.start(); //Use to start CRON job
   }
 
   initRepositories() {
