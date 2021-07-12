@@ -6,16 +6,20 @@ const logger = require("../utils/logger");
 const CRON_SYNTAX_GENERAL = "0 6 * * *";
 
 class Synker {
-  constructor(doctorUsecase) {
+  constructor(doctorUsecase, specialisationUsecase) {
     this.doctorUsecase = doctorUsecase;
+    this.specialisationUsecase = specialisationUsecase;
   }
 
   async _sync() {
     try {
       const doctors = await this._fetchDoctorDetails(1);
-      const fomattedDoctors = this.transformData(doctors);
-      for (let doctor of fomattedDoctors) {
+      const formatted = this.transformData(doctors);
+      for (let doctor of formatted.doctors) {
         this.doctorUsecase.create(doctor);
+      }
+      for (let specialisation of formatted.specialisations) {
+        this.specialisationUsecase.create({ label: specialisation });
       }
     } catch (err) {
       console.log(err);
@@ -24,6 +28,7 @@ class Synker {
 
   transformData(data) {
     const formatted = [];
+    const specialisations = [];
 
     for (let d of data) {
       formatted.push({
@@ -32,9 +37,10 @@ class Synker {
         specialisation: d.Doctor_Specialisation,
         is_active: d.blocked == 0,
       });
+      specialisations.push(d.Doctor_Specialisation);
     }
 
-    return formatted;
+    return { doctors: formatted, specialisations: new Set(specialisations) };
   }
 
   _fetchDoctorDetails(centerid) {
@@ -80,6 +86,6 @@ class Synker {
   }
 }
 
-module.exports = (doctorUsecase) => {
-  return new Synker(doctorUsecase);
+module.exports = (doctorUsecase, specialisationUsecase) => {
+  return new Synker(doctorUsecase, specialisationUsecase);
 };

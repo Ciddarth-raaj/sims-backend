@@ -86,7 +86,10 @@ class Server {
   }
 
   initServices() {
-    this.synker = require("./services/synker")(this.doctorUsecase);
+    this.synker = require("./services/synker")(
+      this.doctorUsecase,
+      this.specialisationUsecase
+    );
     // this.synker._sync(); //Use for immediate doctor details sync
     this.synker.start(); //Use to start CRON job
   }
