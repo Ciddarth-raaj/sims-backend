@@ -86,10 +86,12 @@ class Server {
 
   initRepositories() {
     this.userRepo = require("./repository/user")(this.mysql.connection);
+    this.doctorRepo = require("./repository/doctor")(this.mysql.connection);
   }
 
   initUsecases() {
     this.userUsecase = require("./usecase/user")(this.userRepo);
+    this.doctorUsecase = require("./usecase/doctor")(this.doctorRepo);
   }
 
   initRoutes() {
@@ -97,8 +99,10 @@ class Server {
     app.use(authMiddleWare);
 
     const userRouter = require("./routes/user")(this.userUsecase);
+    const doctorRouter = require("./routes/doctor")(this.doctorUsecase);
 
     app.use("/user", userRouter.getRouter());
+    app.use("/doctor", doctorRouter.getRouter());
   }
 
   onClose() {

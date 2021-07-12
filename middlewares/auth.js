@@ -4,6 +4,9 @@ const unProtectedRoutes = {
   "/user/login": {
     methods: { post: true },
   },
+  "/doctor": {
+    methods: { post: true, get: true, patch: true },
+  },
 };
 
 async function auth(req, res, next) {
