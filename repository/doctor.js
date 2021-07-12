@@ -7,16 +7,35 @@ class DoctorRepository {
 
   create(doctor) {
     return new Promise((resolve, reject) => {
+      this.db.query("INSERT INTO doctors SET ?", [doctor], (err, docs) => {
+        if (err) {
+          logger.Log({
+            level: logger.LEVEL.ERROR,
+            component: "REPOSITORY.DOCTOR",
+            code: "REPOSITORY.DOCTOR.CREATE",
+            description: err.toString(),
+            category: "",
+            ref: {},
+          });
+          reject(err);
+          return;
+        }
+        resolve();
+      });
+    });
+  }
+
+  get(filter) {
+    return new Promise((resolve, reject) => {
       this.db.query(
-        "INSERT INTO doctors SET ?",
-        // [Object.keys(doctor), Object.values(doctor)],
-        [doctor],
+        "SELECT * FROM doctors WHERE is_active = true;",
+        // [doctor],
         (err, docs) => {
           if (err) {
             logger.Log({
               level: logger.LEVEL.ERROR,
               component: "REPOSITORY.DOCTOR",
-              code: "REPOSITORY.DOCTOR.CREATE",
+              code: "REPOSITORY.DOCTOR.GET",
               description: err.toString(),
               category: "",
               ref: {},

@@ -15,6 +15,17 @@ class DoctorUsecase {
       }
     });
   }
+
+  get(filter) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const doctors = await this.doctorRepo.get(filter);
+        resolve(doctors);
+      } catch (err) {
+        reject(err);
+      }
+    });
+  }
 }
 
 module.exports = (doctorRepo) => {
