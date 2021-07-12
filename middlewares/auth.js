@@ -5,7 +5,10 @@ const unProtectedRoutes = {
     methods: { post: true },
   },
   "/doctor": {
-    methods: { post: true, get: true, patch: true },
+    methods: { post: true, get: true },
+  },
+  "/specialisation": {
+    methods: { post: true, get: true },
   },
 };
 
