@@ -7,21 +7,26 @@ class DoctorRepository {
 
   create(doctor) {
     return new Promise((resolve, reject) => {
-      this.db.query("INSERT INTO doctors SET ?", [doctor], (err, docs) => {
-        if (err) {
-          logger.Log({
-            level: logger.LEVEL.ERROR,
-            component: "REPOSITORY.DOCTOR",
-            code: "REPOSITORY.DOCTOR.CREATE",
-            description: err.toString(),
-            category: "",
-            ref: {},
-          });
-          reject(err);
-          return;
+      this.db.query(
+        `INSERT INTO doctors SET ?
+      ON DUPLICATE KEY UPDATE ?`,
+        [doctor, doctor],
+        (err, docs) => {
+          if (err) {
+            logger.Log({
+              level: logger.LEVEL.ERROR,
+              component: "REPOSITORY.DOCTOR",
+              code: "REPOSITORY.DOCTOR.CREATE",
+              description: err.toString(),
+              category: "",
+              ref: {},
+            });
+            reject(err);
+            return;
+          }
+          resolve();
         }
-        resolve();
-      });
+      );
     });
   }
 
