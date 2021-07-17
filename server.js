@@ -97,6 +97,7 @@ class Server {
   initRepositories() {
     this.userRepo = require("./repository/user")(this.mysql.connection);
     this.doctorRepo = require("./repository/doctor")(this.mysql.connection);
+    this.patientsRepo = require("./repository/patients")(this.mysql.connection);
     this.specialisationRepo = require("./repository/specialisation")(
       this.mysql.connection
     );
@@ -106,6 +107,7 @@ class Server {
   initUsecases() {
     this.userUsecase = require("./usecase/user")(this.userRepo);
     this.doctorUsecase = require("./usecase/doctor")(this.doctorRepo);
+    this.patientsUsecase = require("./usecase/patients")(this.patientsRepo);
     this.specialisationUsecase = require("./usecase/specialisation")(
       this.specialisationRepo
     );
@@ -118,6 +120,7 @@ class Server {
 
     const userRouter = require("./routes/user")(this.userUsecase);
     const doctorRouter = require("./routes/doctor")(this.doctorUsecase);
+    const patientsRouter = require("./routes/patients")(this.patientsUsecase);
     const specialisationRouter = require("./routes/specialisation")(
       this.specialisationUsecase
     );
@@ -127,6 +130,7 @@ class Server {
     app.use("/doctor", doctorRouter.getRouter());
     app.use("/specialisation", specialisationRouter.getRouter());
     app.use("/orders", ordersRouter.getRouter());
+    app.use("/patients", patientsRouter.getRouter());
   }
 
   onClose() {

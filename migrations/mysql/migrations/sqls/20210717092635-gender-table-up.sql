@@ -1,0 +1,1 @@
+CREATE TABLE `code_gender` ( `gender_id` INT NOT NULL AUTO_INCREMENT , `label` VARCHAR(20) NOT NULL , `is_active` BOOLEAN NOT NULL DEFAULT TRUE , PRIMARY KEY (`gender_id`)) ENGINE = InnoDB;

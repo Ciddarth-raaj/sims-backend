@@ -1,21 +1,21 @@
 const logger = require("../utils/logger");
 
-class UserRepository {
+class PatientsRepository {
   constructor(db) {
     this.db = db;
   }
 
-  login(username, password) {
+  getDetails(patient_id) {
     return new Promise((resolve, reject) => {
       this.db.query(
-        "SELECT user_id, user_type FROM users WHERE username = ? AND password = SHA1(?)",
-        [username, password],
+        "SELECT name, gender, dob, area, phone, email, is_active, created_at, updated_at FROM patients WHERE is_active = true AND patient_id = ?",
+        [patient_id],
         (err, docs) => {
           if (err) {
             logger.Log({
               level: logger.LEVEL.ERROR,
-              component: "REPOSITORY.USER",
-              code: "REPOSITORY.USER.LOGIN",
+              component: "REPOSITORY.DOCTOR",
+              code: "REPOSITORY.DOCTOR.GET-DETAILS",
               description: err.toString(),
               category: "",
               ref: {},
@@ -31,5 +31,5 @@ class UserRepository {
 }
 
 module.exports = (db) => {
-  return new UserRepository(db);
+  return new PatientsRepository(db);
 };

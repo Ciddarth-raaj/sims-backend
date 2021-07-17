@@ -1,5 +1,4 @@
-const logger = require("../utils/logger");
-
+const jwt = require("../services/jwt");
 class UserUsecase {
   constructor(userRepo) {
     this.userRepo = userRepo;
@@ -10,7 +9,14 @@ class UserUsecase {
       try {
         const resp = await this.userRepo.login(username, password);
         if (resp.length > 0) {
-          resolve({ code: 200, ...resp[0] });
+          const token = await jwt.sign(
+            {
+              user_id: resp[0].user_id,
+              role: resp[0].user_type == 1 ? "customer" : "admin",
+            },
+            "30d"
+          );
+          resolve({ code: 200, token: token });
         } else {
           resolve({ code: 404, msg: "Access Denied !" });
         }

@@ -26,22 +26,24 @@ async function auth(req, res, next) {
 
   try {
     const token = req.headers["x-access-token"];
-
     if (token === undefined) {
-      res.json({ code: 403, msg: "Access Denied" });
+      res.json({ code: 403, msg: "Access Denied", path: req.path });
       res.end();
       return;
     } else {
       const decoded = await jwt.verify(token);
+      req.decoded = {};
+      req.decoded.id = decoded.user_id;
+      req.decoded.role = decoded.role;
 
-      if (decoded.role !== "ADMIN") {
-        res.json({ code: 403, msg: "Access Denied" });
-        res.end();
-        return;
-      }
+      // if (decoded.role !== "ADMIN") {
+      //   res.json({ code: 403, msg: "Access Denied", path: req.path });
+      //   res.end();
+      //   return;
+      // }
     }
   } catch (err) {
-    res.json({ code: 403, msg: "Access Denied" });
+    res.json({ code: 403, msg: "Access Denied", path: req.path });
     res.end();
     return;
   }
