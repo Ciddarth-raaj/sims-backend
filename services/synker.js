@@ -14,33 +14,44 @@ class Synker {
   async _sync() {
     try {
       const doctors = await this._fetchDoctorDetails(1);
-      const formatted = this.transformData(doctors);
-      for (let doctor of formatted.doctors) {
+      const formatted = await this.transformData(doctors);
+
+      for (let doctor of formatted) {
         this.doctorUsecase.create(doctor);
-      }
-      for (let specialisation of formatted.specialisations) {
-        this.specialisationUsecase.create({ label: specialisation });
       }
     } catch (err) {
       console.log(err);
     }
   }
 
-  transformData(data) {
+  async transformData(data) {
     const formatted = [];
-    const specialisations = [];
+    const specialisations = await this.specialisationUsecase.get();
+
+    const specialisationMap = {};
+
+    for (const s of specialisations) {
+      specialisationMap[s.label] = s.specialisation_id;
+    }
 
     for (let d of data) {
+      if (specialisationMap[d.Doctor_Specialisation] != undefined) {
+        d.Doctor_Specialisation = specialisationMap[d.Doctor_Specialisation];
+      } else {
+        d.Doctor_Specialisation = await this.specialisationUsecase.create({
+          label: d.Doctor_Specialisation,
+        });
+      }
+
       formatted.push({
         doctor_id: d.Doctor_id,
         doctor_name: d.Doctor_name,
         specialisation: d.Doctor_Specialisation,
         is_active: d.blocked == 0,
       });
-      specialisations.push(d.Doctor_Specialisation);
     }
 
-    return { doctors: formatted, specialisations: new Set(specialisations) };
+    return formatted;
   }
 
   _fetchDoctorDetails(centerid) {

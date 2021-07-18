@@ -8,8 +8,8 @@ class SpecialisationUsecase {
   create(doctor) {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.specialisationRepo.create(doctor);
-        resolve();
+        const inserted_id = await this.specialisationRepo.create(doctor);
+        resolve(inserted_id);
       } catch (err) {
         reject(err);
       }

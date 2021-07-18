@@ -11,7 +11,7 @@ class SpecialisationRepository {
         `INSERT INTO specialisations SET ?
       ON DUPLICATE KEY UPDATE ?`,
         [specialisation, specialisation],
-        (err) => {
+        (err, docs) => {
           if (err) {
             logger.Log({
               level: logger.LEVEL.ERROR,
@@ -24,7 +24,7 @@ class SpecialisationRepository {
             reject(err);
             return;
           }
-          resolve();
+          resolve(docs.insertId);
         }
       );
     });
