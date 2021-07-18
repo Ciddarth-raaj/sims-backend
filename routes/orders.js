@@ -34,6 +34,30 @@ class OrdersRoutes {
 
       res.end();
     });
+
+    router.post("/", async (req, res) => {
+      try {
+        const schema = {
+          mobile: Joi.number().required(),
+        };
+
+        const reqBody = req.body;
+
+        const isValid = Joi.validate(reqBody, schema);
+
+        if (isValid.error !== null) {
+          throw isValid.error;
+        }
+
+        const orderRes = await this.ordersUsecase.create(reqBody);
+        res.json(orderRes);
+      } catch (err) {
+        console.log(err);
+        respondError(res, err);
+      }
+
+      res.end();
+    });
   }
 
   getRouter() {

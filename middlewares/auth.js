@@ -13,6 +13,9 @@ const unProtectedRoutes = {
   "/orders/razorpay": {
     methods: { post: true },
   },
+  "/orders": {
+    methods: { post: true },
+  },
 };
 
 async function auth(req, res, next) {

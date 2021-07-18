@@ -1,5 +1,5 @@
 const Razorpay = require("razorpay");
-
+const SMS = require("../services/sms");
 class OrdersUsecase {
   constructor(ordersRepo) {
     this.ordersRepo = ordersRepo;
@@ -25,6 +25,20 @@ class OrdersUsecase {
           }
           resolve(order);
         });
+      } catch (err) {
+        reject(err);
+      }
+    });
+  }
+
+  create(order) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await SMS.send(
+          order.mobile,
+          "Dear xxxx Your Appointment has been fixed with xxxx xxxx on xxxx at xxxx in xxxx. Please Make yourself available 15 Min before the Appointment in the Hospitals"
+        );
+        resolve();
       } catch (err) {
         reject(err);
       }
