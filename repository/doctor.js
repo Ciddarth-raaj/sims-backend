@@ -33,7 +33,9 @@ class DoctorRepository {
   get(filter) {
     return new Promise((resolve, reject) => {
       this.db.query(
-        "SELECT * FROM doctors WHERE is_active = true;",
+        `SELECT *,specialisations.label as specialisation  FROM doctors 
+        LEFT JOIN specialisations ON doctors.specialisation = specialisations.specialisation_id
+        WHERE doctors.is_active = true;`,
         // [doctor],
         (err, docs) => {
           if (err) {
