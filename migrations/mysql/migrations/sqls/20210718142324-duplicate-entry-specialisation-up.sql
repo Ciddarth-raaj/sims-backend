@@ -1,0 +1,1 @@
+ALTER TABLE `specialisations` ADD UNIQUE(`label`);
