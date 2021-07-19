@@ -38,7 +38,7 @@ class OrdersUsecase {
           order.mobile,
           "Dear xxxx Your Appointment has been fixed with xxxx xxxx on xxxx at xxxx in xxxx. Please Make yourself available 15 Min before the Appointment in the Hospitals"
         );
-        resolve();
+        resolve({ code: 200 });
       } catch (err) {
         reject(err);
       }
