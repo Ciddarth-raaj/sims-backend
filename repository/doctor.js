@@ -32,10 +32,11 @@ class DoctorRepository {
 
   get(filter) {
     return new Promise((resolve, reject) => {
+      const filterQuery = this._extractFilter(filter, "AND");
       this.db.query(
         `SELECT *,specialisations.label as specialisation  FROM doctors 
         LEFT JOIN specialisations ON doctors.specialisation = specialisations.specialisation_id
-        WHERE doctors.is_active = true;`,
+        WHERE doctors.is_active = true ${filterQuery}`,
         // [doctor],
         (err, docs) => {
           if (err) {
@@ -54,6 +55,29 @@ class DoctorRepository {
         }
       );
     });
+  }
+
+  _extractFilter(filter, start) {
+    if (filter == undefined) {
+      return "";
+    }
+
+    let query = start == undefined ? "WHERE" : start;
+
+    if (filter.specialisations) {
+      query +=
+        " doctors.specialisation IN (" +
+        filter.specialisations.join(",") +
+        ") AND";
+    }
+
+    if (query.endsWith("AND")) {
+      query = query.substr(0, query.length - 4);
+    } else if (query.endsWith("WHERE")) {
+      query = query.substr(0, query.length - 5);
+    }
+
+    return query;
   }
 }
 

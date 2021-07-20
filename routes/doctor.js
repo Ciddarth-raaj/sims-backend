@@ -45,7 +45,11 @@ class DoctorRoutes {
 
     router.get("/", async (req, res) => {
       try {
-        const schema = {};
+        const schema = {
+          specialisations: Joi.array()
+            .items(Joi.number().optional())
+            .optional(),
+        };
 
         const reqBody = req.query;
 
