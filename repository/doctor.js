@@ -57,6 +57,32 @@ class DoctorRepository {
     });
   }
 
+  getById(doctor_id) {
+    return new Promise((resolve, reject) => {
+      this.db.query(
+        `SELECT *,specialisations.label as specialisation  FROM doctors 
+        LEFT JOIN specialisations ON doctors.specialisation = specialisations.specialisation_id
+        WHERE doctors.is_active = true AND doctor_id = ?`,
+        [doctor_id],
+        (err, docs) => {
+          if (err) {
+            logger.Log({
+              level: logger.LEVEL.ERROR,
+              component: "REPOSITORY.DOCTOR",
+              code: "REPOSITORY.DOCTOR.GET-BY-ID",
+              description: err.toString(),
+              category: "",
+              ref: {},
+            });
+            reject(err);
+            return;
+          }
+          resolve(docs);
+        }
+      );
+    });
+  }
+
   _extractFilter(filter, start) {
     if (filter == undefined) {
       return "";

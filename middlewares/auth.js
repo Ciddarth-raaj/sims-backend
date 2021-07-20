@@ -16,6 +16,9 @@ const unProtectedRoutes = {
   "/orders": {
     methods: { post: true },
   },
+  "/doctor/id": {
+    methods: { get: true },
+  },
 };
 
 async function auth(req, res, next) {

@@ -69,8 +69,27 @@ class DoctorRoutes {
       res.end();
     });
 
-    router.get("/", (req, res) => {
-      res.json({ code: 200, msg: "Success !" });
+    router.get("/id", async (req, res) => {
+      try {
+        const schema = {
+          doctor_id: Joi.number().optional(),
+        };
+
+        const reqBody = req.query;
+
+        const isValid = Joi.validate(reqBody, schema);
+
+        if (isValid.error !== null) {
+          throw isValid.error;
+        }
+
+        const doctors = await this.doctorUsecase.getById(reqBody.doctor_id);
+        res.json(doctors);
+      } catch (err) {
+        console.log(err);
+        respondError(res, err);
+      }
+
       res.end();
     });
   }
