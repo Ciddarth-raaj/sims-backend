@@ -25,6 +25,33 @@ class DoctorRepository {
     });
   }
 
+  update(data) {
+    return new Promise((resolve, reject) => {
+      const appointment_id = data.appointment_id;
+      delete data.appointment_id;
+
+      this.db.query(
+        `UPDATE appointments SET ? WHERE appointment_id = ?`,
+        [data, appointment_id],
+        (err, docs) => {
+          if (err) {
+            logger.Log({
+              level: logger.LEVEL.ERROR,
+              component: "REPOSITORY.APPOINTMENT",
+              code: "REPOSITORY.APPOINTMENT.UPDATE",
+              description: err.toString(),
+              category: "",
+              ref: {},
+            });
+            reject(err);
+            return;
+          }
+          resolve();
+        }
+      );
+    });
+  }
+
   checkSlot(doctor_id, timeslot) {
     return new Promise((resolve, reject) => {
       this.db.query(
@@ -66,6 +93,34 @@ class DoctorRepository {
               level: logger.LEVEL.ERROR,
               component: "REPOSITORY.DOCTOR",
               code: "REPOSITORY.DOCTOR.GET-By-ID",
+              description: err.toString(),
+              category: "",
+              ref: {},
+            });
+            reject(err);
+            return;
+          }
+          resolve(docs);
+        }
+      );
+    });
+  }
+
+  getByAppointmentId(appointment_id) {
+    return new Promise((resolve, reject) => {
+      this.db.query(
+        `SELECT appointment_id, appointments.doctor_id, doctor_name, image, label as status, status_id, timeslot,appointments.created_at FROM appointments
+        LEFT JOIN doctors ON appointments.doctor_id = doctors.doctor_id
+        LEFT JOIN appointment_status ON appointment_status.status_id = appointment_status
+        WHERE appointment_id = ?
+        ORDER BY timeslot`,
+        [appointment_id],
+        (err, docs) => {
+          if (err) {
+            logger.Log({
+              level: logger.LEVEL.ERROR,
+              component: "REPOSITORY.DOCTOR",
+              code: "REPOSITORY.DOCTOR.GET-BY-APP-ID",
               description: err.toString(),
               category: "",
               ref: {},

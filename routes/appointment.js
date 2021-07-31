@@ -20,7 +20,7 @@ class AppointmentRoutes {
         };
 
         const reqBody = req.body;
-        console.log(reqBody);
+
         reqBody.patient_id = req.decoded.id;
         reqBody.timeslot = moment(new Date(reqBody.timeslot)).format(
           "YYYY-MM-DD HH:mm:ss"
@@ -33,6 +33,38 @@ class AppointmentRoutes {
         }
 
         const data = await this.appointmentUsecase.create(reqBody);
+        res.json(data);
+      } catch (err) {
+        console.log(err);
+        respondError(res, err);
+      }
+
+      res.end();
+    });
+
+    router.patch("/", async (req, res) => {
+      try {
+        const schema = {
+          appointment_id: Joi.number().required(),
+          timeslot: Joi.date().optional(),
+          appointment_status: Joi.date().optional(),
+        };
+
+        const reqBody = req.body;
+
+        if (reqBody.timeslot) {
+          reqBody.timeslot = moment(new Date(reqBody.timeslot)).format(
+            "YYYY-MM-DD HH:mm:ss"
+          );
+        }
+
+        const isValid = Joi.validate(reqBody, schema);
+
+        if (isValid.error !== null) {
+          throw isValid.error;
+        }
+
+        const data = await this.appointmentUsecase.update(reqBody);
         res.json(data);
       } catch (err) {
         console.log(err);
