@@ -101,19 +101,26 @@ class Server {
     this.specialisationRepo = require("./repository/specialisation")(
       this.mysql.connection
     );
-    this.appointmentRepo = require("./repository/appointment")(this.mysql.connection);
+    this.appointmentRepo = require("./repository/appointment")(
+      this.mysql.connection
+    );
     // this.doctorRepo = require("./repository/doctor")(this.mysql.connection);
   }
 
   initUsecases() {
-    this.userUsecase = require("./usecase/user")(this.userRepo);
-    this.doctorUsecase = require("./usecase/doctor")(this.doctorRepo);
     this.patientsUsecase = require("./usecase/patients")(this.patientsRepo);
+    this.userUsecase = require("./usecase/user")(
+      this.userRepo,
+      this.patientsUsecase
+    );
+    this.doctorUsecase = require("./usecase/doctor")(this.doctorRepo);
     this.specialisationUsecase = require("./usecase/specialisation")(
       this.specialisationRepo
     );
     this.ordersUsecase = require("./usecase/orders")(this.ordersRepo);
-    this.appointmentUsecase = require("./usecase/appointment")(this.appointmentRepo);
+    this.appointmentUsecase = require("./usecase/appointment")(
+      this.appointmentRepo
+    );
   }
 
   initRoutes() {
@@ -127,7 +134,9 @@ class Server {
       this.specialisationUsecase
     );
     const ordersRouter = require("./routes/orders")(this.ordersUsecase);
-    const appointmentRouter = require("./routes/appointment")(this.appointmentUsecase);
+    const appointmentRouter = require("./routes/appointment")(
+      this.appointmentUsecase
+    );
 
     app.use("/user", userRouter.getRouter());
     app.use("/doctor", doctorRouter.getRouter());

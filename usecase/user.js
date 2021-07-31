@@ -1,7 +1,8 @@
 const jwt = require("../services/jwt");
 class UserUsecase {
-  constructor(userRepo) {
+  constructor(userRepo, patientsUsecase) {
     this.userRepo = userRepo;
+    this.patientsUsecase = patientsUsecase;
   }
 
   login(username, password) {
@@ -9,6 +10,14 @@ class UserUsecase {
       try {
         const resp = await this.userRepo.login(username, password);
         if (resp.length > 0) {
+          let patient_details = undefined;
+
+          if (resp[0].user_type == 1) {
+            patient_details = await this.patientsUsecase.getDetails(
+              resp[0].user_id
+            );
+          }
+
           const token = await jwt.sign(
             {
               user_id: resp[0].user_id,
@@ -16,7 +25,7 @@ class UserUsecase {
             },
             "30d"
           );
-          resolve({ code: 200, token: token });
+          resolve({ code: 200, token: token, name: patient_details?.name });
         } else {
           resolve({ code: 404, msg: "Access Denied !" });
         }
@@ -28,6 +37,6 @@ class UserUsecase {
   }
 }
 
-module.exports = (userRepo) => {
-  return new UserUsecase(userRepo);
+module.exports = (userRepo, patientsUsecase) => {
+  return new UserUsecase(userRepo, patientsUsecase);
 };
