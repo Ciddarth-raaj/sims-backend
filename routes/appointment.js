@@ -41,12 +41,11 @@ class AppointmentRoutes {
       res.end();
     });
 
-    // router.get("/", async (req, res) => {
+    // router.get("/check", async (req, res) => {
     //   try {
     //     const schema = {
-    //       specialisations: Joi.array()
-    //         .items(Joi.number().optional())
-    //         .optional(),
+    //       doctor_id: Joi.number().required(),
+    //       timeslot: Joi.date().required(),
     //     };
 
     //     const reqBody = req.query;
@@ -57,8 +56,11 @@ class AppointmentRoutes {
     //       throw isValid.error;
     //     }
 
-    //     const doctors = await this.appointmentUsecase.get(reqBody);
-    //     res.json({ code: 200, doctors: doctors });
+    //     const data = await this.appointmentUsecase.checkSlot(
+    //       reqBody.doctor_id,
+    //       reqBody.timeslot
+    //     );
+    //     res.json(data);
     //   } catch (err) {
     //     console.log(err);
     //     respondError(res, err);

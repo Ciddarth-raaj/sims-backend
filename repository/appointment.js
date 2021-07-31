@@ -7,15 +7,37 @@ class DoctorRepository {
 
   create(data) {
     return new Promise((resolve, reject) => {
+      this.db.query(`INSERT INTO appointments SET ?`, [data], (err, docs) => {
+        if (err) {
+          logger.Log({
+            level: logger.LEVEL.ERROR,
+            component: "REPOSITORY.APPOINTMENT",
+            code: "REPOSITORY.APPOINTMENT.CREATE",
+            description: err.toString(),
+            category: "",
+            ref: {},
+          });
+          reject(err);
+          return;
+        }
+        resolve();
+      });
+    });
+  }
+
+  checkSlot(doctor_id, timeslot) {
+    return new Promise((resolve, reject) => {
       this.db.query(
-        `INSERT INTO appointments SET ?`,
-        [data],
+        `SELECT * FROM appointments WHERE doctor_id = ?
+        AND timeslot > DATE_ADD(?, INTERVAL -30 MINUTE)
+        AND timeslot < DATE_ADD(?, INTERVAL 30 MINUTE)`,
+        [doctor_id, timeslot, timeslot],
         (err, docs) => {
           if (err) {
             logger.Log({
               level: logger.LEVEL.ERROR,
               component: "REPOSITORY.APPOINTMENT",
-              code: "REPOSITORY.APPOINTMENT.CREATE",
+              code: "REPOSITORY.APPOINTMENT.CHECK-SLOT",
               description: err.toString(),
               category: "",
               ref: {},
@@ -23,7 +45,7 @@ class DoctorRepository {
             reject(err);
             return;
           }
-          resolve();
+          resolve(docs);
         }
       );
     });
@@ -33,7 +55,7 @@ class DoctorRepository {
   //   return new Promise((resolve, reject) => {
   //     const filterQuery = this._extractFilter(filter, "AND");
   //     this.db.query(
-  //       `SELECT *,specialisations.label as specialisation  FROM doctors 
+  //       `SELECT *,specialisations.label as specialisation  FROM doctors
   //       LEFT JOIN specialisations ON doctors.specialisation = specialisations.specialisation_id
   //       WHERE doctors.is_active = true ${filterQuery}`,
   //       // [doctor],
@@ -59,7 +81,7 @@ class DoctorRepository {
   // getById(doctor_id) {
   //   return new Promise((resolve, reject) => {
   //     this.db.query(
-  //       `SELECT *,specialisations.label as specialisation  FROM doctors 
+  //       `SELECT *,specialisations.label as specialisation  FROM doctors
   //       LEFT JOIN specialisations ON doctors.specialisation = specialisations.specialisation_id
   //       WHERE doctors.is_active = true AND doctor_id = ?`,
   //       [doctor_id],
