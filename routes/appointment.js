@@ -20,6 +20,7 @@ class AppointmentRoutes {
         };
 
         const reqBody = req.body;
+        console.log(reqBody);
         reqBody.patient_id = req.decoded.id;
         reqBody.timeslot = moment(new Date(reqBody.timeslot)).format(
           "YYYY-MM-DD HH:mm:ss"
@@ -41,33 +42,30 @@ class AppointmentRoutes {
       res.end();
     });
 
-    // router.get("/check", async (req, res) => {
-    //   try {
-    //     const schema = {
-    //       doctor_id: Joi.number().required(),
-    //       timeslot: Joi.date().required(),
-    //     };
+    router.get("/", async (req, res) => {
+      try {
+        const schema = {
+          patient_id: Joi.number().required(),
+        };
 
-    //     const reqBody = req.query;
+        const reqBody = req.query;
+        reqBody.patient_id = req.decoded.id;
 
-    //     const isValid = Joi.validate(reqBody, schema);
+        const isValid = Joi.validate(reqBody, schema);
 
-    //     if (isValid.error !== null) {
-    //       throw isValid.error;
-    //     }
+        if (isValid.error !== null) {
+          throw isValid.error;
+        }
 
-    //     const data = await this.appointmentUsecase.checkSlot(
-    //       reqBody.doctor_id,
-    //       reqBody.timeslot
-    //     );
-    //     res.json(data);
-    //   } catch (err) {
-    //     console.log(err);
-    //     respondError(res, err);
-    //   }
+        const data = await this.appointmentUsecase.getById(reqBody.patient_id);
+        res.json(data);
+      } catch (err) {
+        console.log(err);
+        respondError(res, err);
+      }
 
-    //   res.end();
-    // });
+      res.end();
+    });
 
     // router.get("/id", async (req, res) => {
     //   try {

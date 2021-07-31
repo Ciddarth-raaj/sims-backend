@@ -38,16 +38,16 @@ class AppointmentUsecase {
     });
   }
 
-  // get(filter) {
-  //   return new Promise(async (resolve, reject) => {
-  //     try {
-  //       const doctors = await this.appointmentRepo.get(filter);
-  //       resolve(doctors);
-  //     } catch (err) {
-  //       reject(err);
-  //     }
-  //   });
-  // }
+  getById(patient_id) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const appointments = await this.appointmentRepo.getById(patient_id);
+        resolve(appointments);
+      } catch (err) {
+        reject(err);
+      }
+    });
+  }
 
   // getById(doctor_id) {
   //   return new Promise(async (resolve, reject) => {

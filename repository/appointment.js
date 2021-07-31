@@ -51,32 +51,32 @@ class DoctorRepository {
     });
   }
 
-  // get(filter) {
-  //   return new Promise((resolve, reject) => {
-  //     const filterQuery = this._extractFilter(filter, "AND");
-  //     this.db.query(
-  //       `SELECT *,specialisations.label as specialisation  FROM doctors
-  //       LEFT JOIN specialisations ON doctors.specialisation = specialisations.specialisation_id
-  //       WHERE doctors.is_active = true ${filterQuery}`,
-  //       // [doctor],
-  //       (err, docs) => {
-  //         if (err) {
-  //           logger.Log({
-  //             level: logger.LEVEL.ERROR,
-  //             component: "REPOSITORY.DOCTOR",
-  //             code: "REPOSITORY.DOCTOR.GET",
-  //             description: err.toString(),
-  //             category: "",
-  //             ref: {},
-  //           });
-  //           reject(err);
-  //           return;
-  //         }
-  //         resolve(docs);
-  //       }
-  //     );
-  //   });
-  // }
+  getById(patient_id) {
+    return new Promise((resolve, reject) => {
+      this.db.query(
+        `SELECT appointment_id, appointments.doctor_id, doctor_name, image, label as status, status_id, timeslot,appointments.created_at FROM appointments
+        LEFT JOIN doctors ON appointments.doctor_id = doctors.doctor_id
+        LEFT JOIN appointment_status ON appointment_status.status_id = appointment_status
+        WHERE patient_id = ?`,
+        [patient_id],
+        (err, docs) => {
+          if (err) {
+            logger.Log({
+              level: logger.LEVEL.ERROR,
+              component: "REPOSITORY.DOCTOR",
+              code: "REPOSITORY.DOCTOR.GET-By-ID",
+              description: err.toString(),
+              category: "",
+              ref: {},
+            });
+            reject(err);
+            return;
+          }
+          resolve(docs);
+        }
+      );
+    });
+  }
 
   // getById(doctor_id) {
   //   return new Promise((resolve, reject) => {
