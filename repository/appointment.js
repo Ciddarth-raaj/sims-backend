@@ -111,13 +111,12 @@ class DoctorRepository {
   getUpcoming(patient_id) {
     return new Promise((resolve, reject) => {
       this.db.query(
-        `SELECT appointment_id, appointments.doctor_id, doctor_name, image, label as status, status_id, timeslot,appointments.created_at,
-        IF(status_id = 5, 1, 0) as cancelled
+        `SELECT appointment_id, appointments.doctor_id, doctor_name, image, label as status, status_id, timeslot,appointments.created_at
         FROM appointments
         LEFT JOIN doctors ON appointments.doctor_id = doctors.doctor_id
         LEFT JOIN appointment_status ON appointment_status.status_id = appointment_status
-        WHERE patient_id = ? AND DATE(timeslot) = DATE(NOW()) AND timeslot >= CURTIME()
-        ORDER BY cancelled ASC, timeslot`,
+        WHERE patient_id = ? AND DATE(timeslot) = DATE(NOW()) AND timeslot >= CURTIME() AND status_id != 5
+        ORDER BY timeslot`,
         [patient_id],
         (err, docs) => {
           if (err) {
