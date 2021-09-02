@@ -99,6 +99,31 @@ class AppointmentRoutes {
       res.end();
     });
 
+    router.get("/upcoming", async (req, res) => {
+      try {
+        const schema = {
+          patient_id: Joi.number().required(),
+        };
+
+        const reqBody = req.query;
+        reqBody.patient_id = req.decoded.id;
+
+        const isValid = Joi.validate(reqBody, schema);
+
+        if (isValid.error !== null) {
+          throw isValid.error;
+        }
+
+        const data = await this.appointmentUsecase.getUpcoming(reqBody.patient_id);
+        res.json(data);
+      } catch (err) {
+        console.log(err);
+        respondError(res, err);
+      }
+
+      res.end();
+    });
+
     // router.get("/id", async (req, res) => {
     //   try {
     //     const schema = {
