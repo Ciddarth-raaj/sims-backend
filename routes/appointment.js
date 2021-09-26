@@ -124,6 +124,31 @@ class AppointmentRoutes {
       res.end();
     });
 
+    router.get("/patients", async (req, res) => {
+      try {
+        const schema = {
+          doctor_id: Joi.number().required(),
+        };
+
+        const reqBody = req.query;
+        reqBody.doctor_id = req.decoded.id;
+
+        const isValid = Joi.validate(reqBody, schema);
+
+        if (isValid.error !== null) {
+          throw isValid.error;
+        }
+
+        const data = await this.appointmentUsecase.getByDoctorId(reqBody.doctor_id);
+        res.json(data);
+      } catch (err) {
+        console.log(err);
+        respondError(res, err);
+      }
+
+      res.end();
+    });
+
     // router.get("/id", async (req, res) => {
     //   try {
     //     const schema = {

@@ -82,6 +82,17 @@ class AppointmentUsecase {
     });
   }
 
+  getByDoctorId(doctor_id) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const appointments = await this.appointmentRepo.getByDoctorId(doctor_id);
+        resolve(appointments);
+      } catch (err) {
+        reject(err);
+      }
+    });
+  }
+
   getUpcoming(patient_id) {
     return new Promise(async (resolve, reject) => {
       try {

@@ -108,6 +108,36 @@ class DoctorRepository {
     });
   }
 
+  getByDoctorId(doctor_id) {
+    return new Promise((resolve, reject) => {
+      this.db.query(
+        `SELECT appointment_id, name, label as status, status_id, timeslot,appointments.created_at,
+        IF(status_id = 5, 1, 0) as cancelled
+        FROM appointments
+        LEFT JOIN patients ON appointments.patient_id = patients.patient_id
+        LEFT JOIN appointment_status ON appointment_status.status_id = appointment_status
+        WHERE doctor_id = ?
+        ORDER BY cancelled ASC, timeslot`,
+        [doctor_id],
+        (err, docs) => {
+          if (err) {
+            logger.Log({
+              level: logger.LEVEL.ERROR,
+              component: "REPOSITORY.DOCTOR",
+              code: "REPOSITORY.DOCTOR.GET-BY-DOCTOR-ID",
+              description: err.toString(),
+              category: "",
+              ref: {},
+            });
+            reject(err);
+            return;
+          }
+          resolve(docs);
+        }
+      );
+    });
+  }
+
   getUpcoming(patient_id) {
     return new Promise((resolve, reject) => {
       this.db.query(
