@@ -27,7 +27,7 @@ class UserUsecase {
             },
             "30d"
           );
-          resolve({ code: 200, token: token, name: user_details?.name });
+          resolve({ code: 200, token: token, name: user_details?.name, role_id: resp[0].user_type });
         } else {
           resolve({ code: 404, msg: "Access Denied !" });
         }
