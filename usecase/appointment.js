@@ -31,19 +31,14 @@ class AppointmentUsecase {
     return new Promise(async (resolve, reject) => {
       try {
         if (data.timeslot !== undefined) {
-          const appointment = await this.getByAppointmentId(
-            data.appointment_id
-          );
+          const appointment = await this.getByAppointmentId(data.appointment_id);
 
           if (appointment.code == 404) {
             resolve({ code: 404 });
             return;
           }
 
-          const bookedAppointments = await this.checkSlot(
-            appointment.doctor_id,
-            data.timeslot
-          );
+          const bookedAppointments = await this.checkSlot(appointment.doctor_id, data.timeslot);
 
           if (bookedAppointments.length >= 1) {
             resolve({ code: 201 });
@@ -52,6 +47,27 @@ class AppointmentUsecase {
         }
 
         await this.appointmentRepo.update(data);
+
+        if (data.appointment_status != undefined || data.appointment_status != null || data.appointment_status == 2) {
+          try {
+            const Meeting = require('google-meet-api').meet;
+
+            const result = await Meeting({
+              clientId: '156374965130-mmgtjkm9bu2vmq40dt83919orld14nde.apps.googleusercontent.com',
+              clientSecret: 'HDnHtnH05ypZwpVmvGRABEuj',
+              refreshToken: '1//04gvvc8zri5gHCgYIARAAGAQSNwF-L9Ir2dH8W8hW3ES6drbx5te7b71mWHO-AYdoy_eKy2GGrPRvdqaF5t1LKws5TEF7TjldBfg',
+              date: "2020-12-01",
+              time: "12:59",
+              summary: 'summary',
+              location: 'location',
+              description: 'description'
+            })
+            console.log(result)
+          } catch (err) {
+            console.log("Error sending email!")
+          }
+        }
+
         resolve({ code: 200 });
         resolve();
       } catch (err) {
