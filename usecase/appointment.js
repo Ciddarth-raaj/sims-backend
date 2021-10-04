@@ -50,12 +50,13 @@ class AppointmentUsecase {
 
         if (data.appointment_status != undefined || data.appointment_status != null || data.appointment_status == 2) {
           try {
-            // export default function createEvent(appointment_id, eventStartTime, eventEndTime, summary, description, attendees) {
             const startTime = new Date(appointment.timeslot);
             const endTime = new Date(startTime.getTime() + 30 * 60000);
 
             const meeting_response = await CalendarAPI(data.appointment_id, startTime, endTime, `Appointment with ${appointment.doctor_name}`, `Scheduled appointment through SIMS App`, ["ciddarthjeyakumar@gmail.com"])
-            console.log(meeting_response)
+            if (meeting_response.code == 200) {
+              await this.appointmentRepo.update({ meeting_link: meeting_response.link, appointment_id: appointment.appointment_id });
+            }
           } catch (err) {
             console.log(err)
             console.log("Error sending email!")
