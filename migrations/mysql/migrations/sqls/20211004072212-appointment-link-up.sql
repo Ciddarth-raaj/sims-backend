@@ -1,0 +1,1 @@
+ALTER TABLE `appointments` ADD `meeting_link` TEXT NULL DEFAULT NULL AFTER `timeslot`;

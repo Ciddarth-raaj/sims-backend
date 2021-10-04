@@ -18,7 +18,7 @@ oAuth2Client.setCredentials({
 // Create a new calender instance.
 const calendar = google.calendar({ version: 'v3', auth: oAuth2Client })
 
-function createEvent(appointment_id, eventStartTime, eventEndTime, summary, description, attendees) {
+module.exports = function createEvent(appointment_id, eventStartTime, eventEndTime, summary, description, attendees) {
     return new Promise((resolve, reject) => {
         const event = {
             summary: summary,
@@ -42,38 +42,13 @@ function createEvent(appointment_id, eventStartTime, eventEndTime, summary, desc
             },
         }
 
-        // Check if we a busy and have an event on our calendar for the same time.
-        calendar.freebusy.query(
-            {
-                resource: {
-                    timeMin: eventStartTime,
-                    timeMax: eventEndTime,
-                    timeZone: 'Asia/Kolkata',
-                    items: [{ id: 'primary' }],
-                },
-            },
-            async (err, res) => {
-                // Check for errors in our query and log them if they exist.
+        return calendar.events.insert(
+            { calendarId: 'primary', resource: event, conferenceDataVersion: '1', sendUpdates: "all", },
+            (err, req) => {
+                // Check for errors and log them if they exist.
                 if (err) reject(err)
-
-                // Create an array of all events on our calendar during that time.
-                const eventArr = res.data.calendars.primary.busy
-
-                // Check if event array is empty which means we are not busy
-                if (eventArr.length === 0) {
-                    return calendar.events.insert(
-                        { calendarId: 'primary', resource: event, conferenceDataVersion: '1', sendUpdates: "all", },
-                        (err, req) => {
-                            // Check for errors and log them if they exist.
-                            if (err) reject(err)
-                            // Else send the meeting link.
-                            resolve({ code: 200, link: req.data.hangoutLink, msg: "Created!" })
-                        }
-                    )
-                }
-
-                // If event array is not empty log that we are busy.
-                resolve({ code: 201, msg: "User busy!" })
+                // Else send the meeting link.
+                resolve({ code: 200, link: req.data.hangoutLink, msg: "Created!" })
             }
         )
     })

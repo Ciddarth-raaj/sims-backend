@@ -1,4 +1,5 @@
 const logger = require("../utils/logger");
+const CalendarAPI = require("../utils/calendar-api");
 
 class AppointmentUsecase {
   constructor(appointmentRepo) {
@@ -30,14 +31,13 @@ class AppointmentUsecase {
   update(data) {
     return new Promise(async (resolve, reject) => {
       try {
+        const appointment = await this.getByAppointmentId(data.appointment_id);
+        if (appointment.code == 404) {
+          resolve({ code: 404 });
+          return;
+        }
+
         if (data.timeslot !== undefined) {
-          const appointment = await this.getByAppointmentId(data.appointment_id);
-
-          if (appointment.code == 404) {
-            resolve({ code: 404 });
-            return;
-          }
-
           const bookedAppointments = await this.checkSlot(appointment.doctor_id, data.timeslot);
 
           if (bookedAppointments.length >= 1) {
@@ -50,20 +50,14 @@ class AppointmentUsecase {
 
         if (data.appointment_status != undefined || data.appointment_status != null || data.appointment_status == 2) {
           try {
-            const Meeting = require('google-meet-api').meet;
+            // export default function createEvent(appointment_id, eventStartTime, eventEndTime, summary, description, attendees) {
+            const startTime = new Date(appointment.timeslot);
+            const endTime = new Date(startTime.getTime() + 30 * 60000);
 
-            const result = await Meeting({
-              clientId: '156374965130-mmgtjkm9bu2vmq40dt83919orld14nde.apps.googleusercontent.com',
-              clientSecret: 'HDnHtnH05ypZwpVmvGRABEuj',
-              refreshToken: '1//04gvvc8zri5gHCgYIARAAGAQSNwF-L9Ir2dH8W8hW3ES6drbx5te7b71mWHO-AYdoy_eKy2GGrPRvdqaF5t1LKws5TEF7TjldBfg',
-              date: "2020-12-01",
-              time: "12:59",
-              summary: 'summary',
-              location: 'location',
-              description: 'description'
-            })
-            console.log(result)
+            const meeting_response = await CalendarAPI(data.appointment_id, startTime, endTime, `Appointment with ${appointment.doctor_name}`, `Scheduled appointment through SIMS App`, ["ciddarthjeyakumar@gmail.com"])
+            console.log(meeting_response)
           } catch (err) {
+            console.log(err)
             console.log("Error sending email!")
           }
         }
