@@ -37,6 +37,16 @@ class UserUsecase {
       }
     });
   }
+
+  getEmailById(id, type) {
+    return new Promise(async (resolve, reject) => {
+      if (type == 1) {
+        resolve(await this.patientsUsecase.getEmail(id));
+      } else {
+        resolve(await this.doctorUsecase.getEmail(id));
+      }
+    })
+  }
 }
 
 module.exports = (userRepo, patientsUsecase, doctorUsecase) => {

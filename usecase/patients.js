@@ -20,6 +20,16 @@ class PatientsUsecase {
       }
     });
   }
+
+  getEmail(patient_id) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        resolve((await this.patientsRepo.getEmail(patient_id))[0])
+      } catch (err) {
+        reject(err)
+      }
+    })
+  }
 }
 
 module.exports = (patientsRepo) => {

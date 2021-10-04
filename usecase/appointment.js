@@ -2,8 +2,9 @@ const logger = require("../utils/logger");
 const CalendarAPI = require("../utils/calendar-api");
 
 class AppointmentUsecase {
-  constructor(appointmentRepo) {
+  constructor(appointmentRepo, userUsecase) {
     this.appointmentRepo = appointmentRepo;
+    this.userUsecase = userUsecase;
   }
 
   create(data) {
@@ -50,10 +51,21 @@ class AppointmentUsecase {
 
         if (data.appointment_status != undefined || data.appointment_status != null || data.appointment_status == 2) {
           try {
+            const doctor_email = (await this.userUsecase.getEmailById(appointment.doctor_id, 2)).email_id;
+            const patient_email = (await this.userUsecase.getEmailById(appointment.patient_id, 1)).email;
             const startTime = new Date(appointment.timeslot);
             const endTime = new Date(startTime.getTime() + 30 * 60000);
+            const attendees = [];
 
-            const meeting_response = await CalendarAPI(appointment.appointment_id, startTime, endTime, `Appointment with ${appointment.doctor_name}`, `Scheduled appointment through SIMS App`, [{ email: "ciddarthjeyakumar@gmail.com" }, { email: "ciddarth@luxgenic.com" }])
+            if (doctor_email != null && doctor_email != undefined) {
+              attendees.push({ email: doctor_email })
+            }
+
+            if (patient_email != null && patient_email != undefined) {
+              attendees.push({ email: patient_email })
+            }
+
+            const meeting_response = await CalendarAPI(appointment.appointment_id, startTime, endTime, `Appointment with ${appointment.doctor_name}`, `Scheduled appointment through SIMS App`, attendees)
             if (meeting_response.code == 200) {
               await this.appointmentRepo.update({ meeting_link: meeting_response.link, appointment_id: appointment.appointment_id });
             }
@@ -150,6 +162,6 @@ class AppointmentUsecase {
   // }
 }
 
-module.exports = (appointmentRepo) => {
-  return new AppointmentUsecase(appointmentRepo);
+module.exports = (appointmentRepo, userUsecase) => {
+  return new AppointmentUsecase(appointmentRepo, userUsecase);
 };

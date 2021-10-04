@@ -28,6 +28,30 @@ class PatientsRepository {
       );
     });
   }
+
+  getEmail(patient_id) {
+    return new Promise((resolve, reject) => {
+      this.db.query(
+        "SELECT email FROM patients WHERE patient_id = ?",
+        [patient_id],
+        (err, docs) => {
+          if (err) {
+            logger.Log({
+              level: logger.LEVEL.ERROR,
+              component: "REPOSITORY.PATIENT",
+              code: "REPOSITORY.PATIENT.GET-EMAIL",
+              description: err.toString(),
+              category: "",
+              ref: {},
+            });
+            reject(err);
+            return;
+          }
+          resolve(docs);
+        }
+      );
+    });
+  }
 }
 
 module.exports = (db) => {

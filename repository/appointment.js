@@ -170,7 +170,7 @@ class DoctorRepository {
   getByAppointmentId(appointment_id) {
     return new Promise((resolve, reject) => {
       this.db.query(
-        `SELECT appointment_id, appointments.doctor_id, doctor_name, image, label as status, status_id, timeslot,appointments.created_at, meeting_link FROM appointments
+        `SELECT appointment_id, appointments.doctor_id, doctor_name, image, label as status, status_id, timeslot,appointments.created_at, meeting_link, appointments.patient_id FROM appointments
         LEFT JOIN doctors ON appointments.doctor_id = doctors.doctor_id
         LEFT JOIN appointment_status ON appointment_status.status_id = appointment_status
         WHERE appointment_id = ?
