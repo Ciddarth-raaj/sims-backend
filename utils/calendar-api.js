@@ -42,6 +42,8 @@ module.exports = function createEvent(appointment_id, eventStartTime, eventEndTi
             },
         }
 
+        console.log(event)
+
         return calendar.events.insert(
             { calendarId: 'primary', resource: event, conferenceDataVersion: '1', sendUpdates: "all", },
             (err, req) => {

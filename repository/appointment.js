@@ -81,7 +81,7 @@ class DoctorRepository {
   getById(patient_id) {
     return new Promise((resolve, reject) => {
       this.db.query(
-        `SELECT appointment_id, appointments.doctor_id, doctor_name, image, label as status, status_id, timeslot,appointments.created_at, meeting_link
+        `SELECT appointment_id, appointments.doctor_id, doctor_name, image, label as status, status_id, timeslot,appointments.created_at, meeting_link,
         IF(status_id = 5, 1, 0) as cancelled
         FROM appointments
         LEFT JOIN doctors ON appointments.doctor_id = doctors.doctor_id
@@ -111,7 +111,7 @@ class DoctorRepository {
   getByDoctorId(doctor_id) {
     return new Promise((resolve, reject) => {
       this.db.query(
-        `SELECT appointment_id, name, label as status, status_id, timeslot, appointments.created_at, meeting_link
+        `SELECT appointment_id, name, label as status, status_id, timeslot, appointments.created_at, meeting_link,
         IF(status_id = 5, 1, 0) as cancelled
         FROM appointments
         LEFT JOIN patients ON appointments.patient_id = patients.patient_id
@@ -145,7 +145,7 @@ class DoctorRepository {
         FROM appointments
         LEFT JOIN doctors ON appointments.doctor_id = doctors.doctor_id
         LEFT JOIN appointment_status ON appointment_status.status_id = appointment_status
-        WHERE patient_id = ? AND DATE(timeslot) = DATE(NOW()) AND timeslot >= CURTIME() AND status_id != 5
+        WHERE patient_id = ? AND DATE(timeslot) = DATE(NOW()) AND timeslot >= CURTIME() AND status_id = 2
         ORDER BY timeslot`,
         [patient_id],
         (err, docs) => {

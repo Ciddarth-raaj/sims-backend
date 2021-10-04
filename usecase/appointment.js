@@ -53,7 +53,7 @@ class AppointmentUsecase {
             const startTime = new Date(appointment.timeslot);
             const endTime = new Date(startTime.getTime() + 30 * 60000);
 
-            const meeting_response = await CalendarAPI(data.appointment_id, startTime, endTime, `Appointment with ${appointment.doctor_name}`, `Scheduled appointment through SIMS App`, ["ciddarthjeyakumar@gmail.com"])
+            const meeting_response = await CalendarAPI(appointment.appointment_id, startTime, endTime, `Appointment with ${appointment.doctor_name}`, `Scheduled appointment through SIMS App`, [{ email: "ciddarthjeyakumar@gmail.com" }, { email: "ciddarth@luxgenic.com" }])
             if (meeting_response.code == 200) {
               await this.appointmentRepo.update({ meeting_link: meeting_response.link, appointment_id: appointment.appointment_id });
             }
