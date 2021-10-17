@@ -1,0 +1,1 @@
+INSERT INTO `appointment_status` (`status_id`, `label`, `created_at`) VALUES (NULL, 'Paid', CURRENT_TIMESTAMP);
