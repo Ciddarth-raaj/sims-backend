@@ -146,6 +146,30 @@ class AppointmentUsecase {
     });
   }
 
+  getTimeSlots(doctor_id) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const moment = require("moment");
+
+        const timeSlots = await this.appointmentRepo.getTimeSlots(doctor_id);
+        const timeMap = {}
+
+        timeSlots.forEach(time => {
+          const date = moment(new Date(time.timeslot)).format("DD/MM/YY")
+          if (timeMap[date] === undefined) {
+            timeMap[date] = []
+          }
+
+          timeMap[date].push(time.timeslot)
+        });
+
+        resolve({ code: 200, data: timeMap });
+      } catch (err) {
+        reject(err);
+      }
+    });
+  }
+
   // getById(doctor_id) {
   //   return new Promise(async (resolve, reject) => {
   //     try {

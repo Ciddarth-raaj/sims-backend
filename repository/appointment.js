@@ -195,6 +195,30 @@ class DoctorRepository {
     });
   }
 
+  getTimeSlots(doctor_id) {
+    return new Promise((resolve, reject) => {
+      this.db.query(
+        `SELECT timeslot FROM appointments WHERE doctor_id = ?`,
+        [doctor_id],
+        (err, docs) => {
+          if (err) {
+            logger.Log({
+              level: logger.LEVEL.ERROR,
+              component: "REPOSITORY.DOCTOR",
+              code: "REPOSITORY.DOCTOR.GET-TIME-SLOTS",
+              description: err.toString(),
+              category: "",
+              ref: {},
+            });
+            reject(err);
+            return;
+          }
+          resolve(docs);
+        }
+      );
+    });
+  }
+
   // getById(doctor_id) {
   //   return new Promise((resolve, reject) => {
   //     this.db.query(

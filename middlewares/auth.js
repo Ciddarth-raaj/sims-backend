@@ -19,6 +19,9 @@ const unProtectedRoutes = {
   "/doctor/id": {
     methods: { get: true },
   },
+  "/appointment/time-slot": {
+    methods: { get: true },
+  },
 };
 
 async function auth(req, res, next) {
