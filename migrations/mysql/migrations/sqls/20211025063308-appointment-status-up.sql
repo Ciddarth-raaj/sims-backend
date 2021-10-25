@@ -1,0 +1,1 @@
+ALTER TABLE `appointments` CHANGE `appointment_status` `appointment_status` INT(11) NOT NULL DEFAULT '2';
