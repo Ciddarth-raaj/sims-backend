@@ -12,14 +12,14 @@ const oAuth2Client = new OAuth2(
 
 // Call the setCredentials method on our oAuth2Client instance and set our refresh token.
 oAuth2Client.setCredentials({
-  refresh_token:
-    "1//040ODJiPy2UodCgYIARAAGAQSNwF-L9IrzWmZ-bnQcy0Nq8POrXbZ1n-z4gQ6rcgGNFbQufdyLrLXGlr5cDOhUGhLnhRZCEWxEJY"
+  access_token: 'ya29.a0ARrdaM93ztzNCYk27AP2EwjmlTpnPyghtPUBd2t_Mhhd6eH14pKagoIKrF9eXmkEftEI6E5fcWoHf6mkA69b_DpUO3E3kEP-e-xBrH2BuhmCBU9ydgA8vM_PjqlSkJlr5FIx7d5OCwMMcmPkwuFkStSc1lrn',
+  refresh_token: "1//040ODJiPy2UodCgYIARAAGAQSNwF-L9IrzWmZ-bnQcy0Nq8POrXbZ1n-z4gQ6rcgGNFbQufdyLrLXGlr5cDOhUGhLnhRZCEWxEJY"
 })
 
 // Create a new calender instance.
 const calendar = google.calendar({ version: "v3", auth: oAuth2Client })
 
-module.exports = function createEvent (
+module.exports = function createEvent(
   appointment_id,
   eventStartTime,
   eventEndTime,

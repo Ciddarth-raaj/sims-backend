@@ -20,8 +20,35 @@ class AppointmentUsecase {
           return;
         }
 
-        await this.appointmentRepo.create(data);
-        resolve({ code: 200 });
+        const appointment_id = await this.appointmentRepo.create(data);
+        const appointment = await this.getByAppointmentId(appointment_id);
+        let meet_link = undefined
+
+        try {
+          const doctor_email = (await this.userUsecase.getEmailById(appointment.doctor_id, 2)).email_id;
+          const patient_email = (await this.userUsecase.getEmailById(appointment.patient_id, 1)).email;
+          const startTime = new Date(appointment.timeslot);
+          const endTime = new Date(startTime.getTime() + 30 * 60000);
+          const attendees = [];
+
+          if (doctor_email != null && doctor_email != undefined) {
+            attendees.push({ email: doctor_email })
+          }
+
+          if (patient_email != null && patient_email != undefined) {
+            attendees.push({ email: patient_email })
+          }
+
+          const meeting_response = await CalendarAPI(appointment.appointment_id, startTime, endTime, `Appointment with ${appointment.doctor_name}`, `Scheduled appointment through SIMS App`, attendees)
+          if (meeting_response.code == 200) {
+            await this.appointmentRepo.update({ meeting_link: meeting_response.link, appointment_id: appointment.appointment_id });
+            meet_link = meeting_response.link
+          }
+        } catch (err) {
+          reject(err)
+        }
+
+        resolve({ code: 200, meet_link: meet_link });
         resolve();
       } catch (err) {
         reject(err);

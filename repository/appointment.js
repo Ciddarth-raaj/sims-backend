@@ -20,7 +20,7 @@ class DoctorRepository {
           reject(err);
           return;
         }
-        resolve();
+        resolve(docs.insertId);
       });
     });
   }
@@ -46,7 +46,7 @@ class DoctorRepository {
             reject(err);
             return;
           }
-          resolve();
+          resolve(docs);
         }
       );
     });
