@@ -1,5 +1,10 @@
+const { default: axios } = require("axios");
 const Razorpay = require("razorpay");
 const SMS = require("../services/sms");
+
+const KEY_ID = "rzp_test_pMZx2ECklysZXf"
+const KEY_SECRET = "eJLzvz94MixucBXiBIFj2Apz"
+
 class OrdersUsecase {
   constructor(ordersRepo) {
     this.ordersRepo = ordersRepo;
@@ -9,8 +14,8 @@ class OrdersUsecase {
     return new Promise(async (resolve, reject) => {
       try {
         var instance = new Razorpay({
-          key_id: "rzp_test_pMZx2ECklysZXf",
-          key_secret: "eJLzvz94MixucBXiBIFj2Apz",
+          key_id: KEY_ID,
+          key_secret: KEY_SECRET,
         });
 
         var options = {
@@ -23,12 +28,25 @@ class OrdersUsecase {
             resolve({ code: err.statusCode, error: err.error });
             return;
           }
+          console.log(order)
           resolve(order);
         });
       } catch (err) {
         reject(err);
       }
     });
+  }
+
+  refund(order_id) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const res = await axios.post(`https://${KEY_ID}:${KEY_SECRET}@api.razorpay.com/v1/payments/${order_id}/refund`, { speed: "optimum" })
+        console.log(res)
+        resolve({ code: 200 })
+      } catch (err) {
+        reject(err)
+      }
+    })
   }
 
   create(order) {

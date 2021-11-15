@@ -2,9 +2,10 @@ const logger = require("../utils/logger");
 const CalendarAPI = require("../utils/calendar-api");
 
 class AppointmentUsecase {
-  constructor(appointmentRepo, userUsecase) {
+  constructor(appointmentRepo, userUsecase, ordersUsecase) {
     this.appointmentRepo = appointmentRepo;
     this.userUsecase = userUsecase;
+    this.ordersUsecase = ordersUsecase;
   }
 
   create(data) {
@@ -72,6 +73,12 @@ class AppointmentUsecase {
             resolve({ code: 201 });
             return;
           }
+        }
+
+        console.log(appointment)
+
+        if (data.appointment_status != undefined && data.appointment_status != null && data.appointment_status == 5) {
+          await this.ordersUsecase.refund(appointment.razorpay_payment_id)
         }
 
         await this.appointmentRepo.update(data);
@@ -189,6 +196,6 @@ class AppointmentUsecase {
   // }
 }
 
-module.exports = (appointmentRepo, userUsecase) => {
-  return new AppointmentUsecase(appointmentRepo, userUsecase);
+module.exports = (appointmentRepo, userUsecase, ordersUsecase) => {
+  return new AppointmentUsecase(appointmentRepo, userUsecase, ordersUsecase);
 };

@@ -1,0 +1,1 @@
+ALTER TABLE `appointments` ADD `razorpay_order_id` TEXT NULL DEFAULT NULL AFTER `meeting_link`, ADD `razorpay_payment_id` TEXT NULL DEFAULT NULL AFTER `razorpay_order_id`;

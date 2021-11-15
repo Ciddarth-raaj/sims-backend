@@ -17,6 +17,8 @@ class AppointmentRoutes {
           patient_id: Joi.number().required(),
           doctor_id: Joi.number().required(),
           timeslot: Joi.date().required(),
+          razorpay_order_id: Joi.string().required(),
+          razorpay_payment_id: Joi.string().required(),
         };
 
         const reqBody = req.body;

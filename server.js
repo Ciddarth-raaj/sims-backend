@@ -113,7 +113,7 @@ class Server {
     this.userUsecase = require("./usecase/user")(this.userRepo, this.patientsUsecase, this.doctorUsecase);
     this.specialisationUsecase = require("./usecase/specialisation")(this.specialisationRepo);
     this.ordersUsecase = require("./usecase/orders")(this.ordersRepo);
-    this.appointmentUsecase = require("./usecase/appointment")(this.appointmentRepo, this.userUsecase);
+    this.appointmentUsecase = require("./usecase/appointment")(this.appointmentRepo, this.userUsecase, this.ordersUsecase);
   }
 
   initRoutes() {
