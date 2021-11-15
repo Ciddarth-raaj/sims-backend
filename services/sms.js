@@ -1,22 +1,34 @@
 const axios = require("axios");
 
-const sender = "SIMSVD";
-const template_id = "6";
-const access_token = "8a9704b16e04d8d4a278dcd6e1e04d8d";
+const Vonage = require('@vonage/server-sdk')
+
+const vonage = new Vonage({
+  apiKey: "895a7113",
+  apiSecret: "GD08yjIw6bWk3CPQ"
+})
 class SMS {
-  constructor() {}
+  constructor() { }
 
   send(mobno, message) {
     return new Promise(async (resolve, reject) => {
       try {
-        const url = `https://txt.smsbajar.com/api/v2/sms/send?template_id=${template_id}&message=${message}&sender=${sender}&to=${mobno}&service=T&access_token=${access_token}`;
-        const res = await axios.get(url);
-        if (res.status != 200) {
-          reject();
-          return;
-        }
-        console.log(res.data);
-        resolve();
+        var to = mobno;
+        var from = "Vonage APIs";
+        var text = message;
+
+        vonage.message.sendSms(from, to, text, (err, responseData) => {
+          if (err) {
+            reject(err)
+          } else {
+            if (responseData.messages[0]['status'] === "0") {
+              console.log("Message sent successfully.");
+              resolve();
+            } else {
+              console.log(`Message failed with error: ${responseData.messages[0]['error-text']}`);
+              reject(responseData.messages[0]['error-text'])
+            }
+          }
+        })
       } catch (err) {
         reject(err);
       }

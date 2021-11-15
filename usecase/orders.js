@@ -1,6 +1,7 @@
 const { default: axios } = require("axios");
 const Razorpay = require("razorpay");
 const SMS = require("../services/sms");
+const EMAIL = require("../services/email");
 
 const KEY_ID = "rzp_test_pMZx2ECklysZXf"
 const KEY_SECRET = "eJLzvz94MixucBXiBIFj2Apz"
@@ -52,9 +53,13 @@ class OrdersUsecase {
   create(order) {
     return new Promise(async (resolve, reject) => {
       try {
+        await EMAIL.send(
+          order.email,
+          "Your appointment is successfully booked")
+
         await SMS.send(
           order.mobile,
-          "Dear xxxx Your Appointment has been fixed with xxxx xxxx on xxxx at xxxx in xxxx. Please Make yourself available 15 Min before the Appointment in the Hospitals"
+          "Your appointment is successfully booked"
         );
         resolve({ code: 200 });
       } catch (err) {

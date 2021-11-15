@@ -39,6 +39,7 @@ class OrdersRoutes {
       try {
         const schema = {
           mobile: Joi.number().required(),
+          email: Joi.string().required(),
         };
 
         const reqBody = req.body;
