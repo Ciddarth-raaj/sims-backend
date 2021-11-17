@@ -12,7 +12,7 @@ class SMS {
   send(mobno, message) {
     return new Promise(async (resolve, reject) => {
       try {
-        var to = mobno;
+        var to = "91" + mobno;
         var from = "Vonage APIs";
         var text = message;
 
