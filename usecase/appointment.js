@@ -75,15 +75,13 @@ class AppointmentUsecase {
           }
         }
 
-        console.log(appointment)
-
         if (data.appointment_status != undefined && data.appointment_status != null && data.appointment_status == 5) {
           await this.ordersUsecase.refund(appointment.razorpay_payment_id)
         }
 
         await this.appointmentRepo.update(data);
 
-        if (data.appointment_status != undefined || data.appointment_status != null || data.appointment_status == 2) {
+        if (data.appointment_status != undefined && data.appointment_status != null && data.appointment_status == 2) {
           try {
             const doctor_email = (await this.userUsecase.getEmailById(appointment.doctor_id, 2)).email_id;
             const patient_email = (await this.userUsecase.getEmailById(appointment.patient_id, 1)).email;
