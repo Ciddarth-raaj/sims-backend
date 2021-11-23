@@ -24,7 +24,6 @@ class SMS {
               console.log("Message sent successfully.");
               resolve();
             } else {
-              console.log(`Message failed with error: ${responseData.messages[0]['error-text']}`);
               reject(responseData.messages[0]['error-text'])
             }
           }

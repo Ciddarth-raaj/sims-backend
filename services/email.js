@@ -30,10 +30,8 @@ class Email {
 
             smtpTransport.sendMail(mailOptions, (error, response) => {
                 if (error) {
-                    console.log(error)
                     reject(error)
                 } else {
-                    console.log(response);
                     resolve()
                 }
             });
