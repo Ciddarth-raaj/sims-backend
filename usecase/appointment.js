@@ -58,7 +58,7 @@ class AppointmentUsecase {
           await EMAIL.send(
             patient_email,
             `Your appointment is successfully booked at the time slot ${appointment.timeslot}. Use ${meet_link} to join the meeting.`,
-            `Appointment with ${appointment.doctor_name}`)
+            `SIMS - Appointment with ${appointment.doctor_name}`)
 
           try {
             await SMS.send(
@@ -100,15 +100,24 @@ class AppointmentUsecase {
         }
 
         if (data.appointment_status != undefined && data.appointment_status != null && data.appointment_status == 5) {
-          await this.ordersUsecase.refund(appointment.razorpay_payment_id)
-          // await EMAIL.send(
-          //   order.email,
-          //   "Your appointment was cancelled due to an emergency. The paid amount will be refunded to your account. Please schedule another appointment to proceed.")
+          const doctor_det = await this.userUsecase.getEmailById(appointment.doctor_id, 2);
+          const doctor_email = doctor_det.email_id
+          const doctor_phone = doctor_det.phone
 
-          // await SMS.send(
-          //   order.mobile,
-          //   "Your appointment was cancelled due to an emergency. The paid amount will be refunded to your account. Please schedule another appointment to proceed."
-          // );
+          const patient_det = await this.userUsecase.getEmailById(appointment.patient_id, 1);
+          const patient_email = patient_det.email
+          const patient_phone = patient_det.phone
+
+          await this.ordersUsecase.refund(appointment.razorpay_payment_id)
+          await EMAIL.send(
+            patient_email,
+            "Your appointment was cancelled due to an emergency. The paid amount will be refunded to your account. Please schedule another appointment to proceed.",
+            "SIMS - Appointment Cancelled")
+
+          await SMS.send(
+            patient_phone,
+            "Your appointment was cancelled due to an emergency. The paid amount will be refunded to your account. Please schedule another appointment to proceed."
+          );
         }
 
         await this.appointmentRepo.update(data);
