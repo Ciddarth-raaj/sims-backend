@@ -113,11 +113,15 @@ class AppointmentUsecase {
             patient_email,
             "Your appointment was cancelled due to an emergency. The paid amount will be refunded to your account. Please schedule another appointment to proceed.",
             "SIMS - Appointment Cancelled")
-
-          await SMS.send(
-            patient_phone,
-            "Your appointment was cancelled due to an emergency. The paid amount will be refunded to your account. Please schedule another appointment to proceed."
-          );
+          
+          try {
+            await SMS.send(
+              patient_phone,
+              "Your appointment was cancelled due to an emergency. The paid amount will be refunded to your account. Please schedule another appointment to proceed."
+            );
+          } catch (err) {
+            console.log(err)
+          }
         }
 
         await this.appointmentRepo.update(data);
