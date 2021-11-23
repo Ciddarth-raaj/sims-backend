@@ -42,7 +42,6 @@ class OrdersUsecase {
     return new Promise(async (resolve, reject) => {
       try {
         const res = await axios.post(`https://${KEY_ID}:${KEY_SECRET}@api.razorpay.com/v1/payments/${order_id}/refund`, { speed: "optimum" })
-        console.log(res)
         resolve({ code: 200 })
       } catch (err) {
         reject(err)

@@ -1,6 +1,9 @@
 const logger = require("../utils/logger");
 const CalendarAPI = require("../utils/calendar-api");
 
+const SMS = require("../services/sms");
+const EMAIL = require("../services/email");
+
 class AppointmentUsecase {
   constructor(appointmentRepo, userUsecase, ordersUsecase) {
     this.appointmentRepo = appointmentRepo;
@@ -77,6 +80,14 @@ class AppointmentUsecase {
 
         if (data.appointment_status != undefined && data.appointment_status != null && data.appointment_status == 5) {
           await this.ordersUsecase.refund(appointment.razorpay_payment_id)
+          await EMAIL.send(
+            order.email,
+            "Your appointment was cancelled due to an emergency. The paid amount will be refunded to your account. Please schedule another appointment to proceed.")
+
+          await SMS.send(
+            order.mobile,
+            "Your appointment was cancelled due to an emergency. The paid amount will be refunded to your account. Please schedule another appointment to proceed."
+          );
         }
 
         await this.appointmentRepo.update(data);
