@@ -21,7 +21,6 @@ class SMS {
             reject(err)
           } else {
             if (responseData.messages[0]['status'] === "0") {
-              console.log("Message sent successfully.");
               resolve();
             } else {
               reject(responseData.messages[0]['error-text'])

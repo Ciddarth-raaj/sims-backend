@@ -29,8 +29,14 @@ class AppointmentUsecase {
         let meet_link = undefined
 
         try {
-          const doctor_email = (await this.userUsecase.getEmailById(appointment.doctor_id, 2)).email_id;
-          const patient_email = (await this.userUsecase.getEmailById(appointment.patient_id, 1)).email;
+          const doctor_det = await this.userUsecase.getEmailById(appointment.doctor_id, 2);
+          const doctor_email = doctor_det.email_id
+          const doctor_phone = doctor_det.phone
+
+          const patient_det = await this.userUsecase.getEmailById(appointment.patient_id, 1);
+          const patient_email = patient_det.email
+          const patient_phone = patient_det.phone
+
           const startTime = new Date(appointment.timeslot);
           const endTime = new Date(startTime.getTime() + 30 * 60000);
           const attendees = [];
@@ -48,6 +54,21 @@ class AppointmentUsecase {
             await this.appointmentRepo.update({ meeting_link: meeting_response.link, appointment_id: appointment.appointment_id });
             meet_link = meeting_response.link
           }
+
+          await EMAIL.send(
+            patient_email,
+            `Your appointment is successfully booked at the time slot ${appointment.timeslot}. Use ${meet_link} to join the meeting.`,
+            `Appointment with ${appointment.doctor_name}`)
+
+          try {
+            await SMS.send(
+              patient_phone,
+              "Your appointment is successfully booked"
+            );
+          } catch (err) {
+            console.log(err)
+          }
+
         } catch (err) {
           reject(err)
         }
@@ -80,14 +101,14 @@ class AppointmentUsecase {
 
         if (data.appointment_status != undefined && data.appointment_status != null && data.appointment_status == 5) {
           await this.ordersUsecase.refund(appointment.razorpay_payment_id)
-          await EMAIL.send(
-            order.email,
-            "Your appointment was cancelled due to an emergency. The paid amount will be refunded to your account. Please schedule another appointment to proceed.")
+          // await EMAIL.send(
+          //   order.email,
+          //   "Your appointment was cancelled due to an emergency. The paid amount will be refunded to your account. Please schedule another appointment to proceed.")
 
-          await SMS.send(
-            order.mobile,
-            "Your appointment was cancelled due to an emergency. The paid amount will be refunded to your account. Please schedule another appointment to proceed."
-          );
+          // await SMS.send(
+          //   order.mobile,
+          //   "Your appointment was cancelled due to an emergency. The paid amount will be refunded to your account. Please schedule another appointment to proceed."
+          // );
         }
 
         await this.appointmentRepo.update(data);

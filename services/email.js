@@ -3,7 +3,7 @@ const nodemailer = require("nodemailer");
 class Email {
     constructor() { }
 
-    send(to_email, message) {
+    send(to_email, message, subject) {
         return new Promise((resolve, reject) => {
             var smtpTransport = nodemailer.createTransport({
                 service: "gmail",
@@ -15,7 +15,7 @@ class Email {
 
             var from = "emailmoduledemo@gmail.com";
             var to = to_email;
-            var subject = message;
+            var subject = subject;
 
             var generateTextFromHTML = true;
             var html = message

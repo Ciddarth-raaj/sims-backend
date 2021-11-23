@@ -109,7 +109,7 @@ class DoctorRepository {
   getEmail(doctor_id) {
     return new Promise((resolve, reject) => {
       this.db.query(
-        "SELECT email_id FROM doctors WHERE doctor_id = ?",
+        "SELECT email_id, phone FROM doctors WHERE doctor_id = ?",
         [doctor_id],
         (err, docs) => {
           if (err) {

@@ -52,14 +52,14 @@ class OrdersUsecase {
   create(order) {
     return new Promise(async (resolve, reject) => {
       try {
-        await EMAIL.send(
-          order.email,
-          "Your appointment is successfully booked")
+        // await EMAIL.send(
+        //   order.email,
+        //   "Your appointment is successfully booked")
 
-        await SMS.send(
-          order.mobile,
-          "Your appointment is successfully booked"
-        );
+        // await SMS.send(
+        //   order.mobile,
+        //   "Your appointment is successfully booked"
+        // );
         resolve({ code: 200 });
       } catch (err) {
         reject(err);
