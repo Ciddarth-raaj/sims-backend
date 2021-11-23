@@ -58,6 +58,7 @@ module.exports = function createEvent(
         sendUpdates: "all"
       },
       (err, req) => {
+        console.log(req)
         // Check for errors and log them if they exist.
         if (err) reject(err)
         // Else send the meeting link.
