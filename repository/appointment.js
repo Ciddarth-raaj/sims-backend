@@ -1,11 +1,11 @@
-const logger = require("../utils/logger");
+const logger = require("../utils/logger")
 
 class DoctorRepository {
-  constructor(db) {
-    this.db = db;
+  constructor (db) {
+    this.db = db
   }
 
-  create(data) {
+  create (data) {
     return new Promise((resolve, reject) => {
       this.db.query(`INSERT INTO appointments SET ?`, [data], (err, docs) => {
         if (err) {
@@ -15,20 +15,20 @@ class DoctorRepository {
             code: "REPOSITORY.APPOINTMENT.CREATE",
             description: err.toString(),
             category: "",
-            ref: {},
-          });
-          reject(err);
-          return;
+            ref: {}
+          })
+          reject(err)
+          return
         }
-        resolve(docs.insertId);
-      });
-    });
+        resolve(docs.insertId)
+      })
+    })
   }
 
-  update(data) {
+  update (data) {
     return new Promise((resolve, reject) => {
-      const appointment_id = data.appointment_id;
-      delete data.appointment_id;
+      const appointment_id = data.appointment_id
+      delete data.appointment_id
 
       this.db.query(
         `UPDATE appointments SET ? WHERE appointment_id = ?`,
@@ -41,18 +41,18 @@ class DoctorRepository {
               code: "REPOSITORY.APPOINTMENT.UPDATE",
               description: err.toString(),
               category: "",
-              ref: {},
-            });
-            reject(err);
-            return;
+              ref: {}
+            })
+            reject(err)
+            return
           }
-          resolve(docs);
+          resolve(docs)
         }
-      );
-    });
+      )
+    })
   }
 
-  checkSlot(doctor_id, timeslot) {
+  checkSlot (doctor_id, timeslot) {
     return new Promise((resolve, reject) => {
       this.db.query(
         `SELECT * FROM appointments WHERE doctor_id = ?
@@ -67,18 +67,18 @@ class DoctorRepository {
               code: "REPOSITORY.APPOINTMENT.CHECK-SLOT",
               description: err.toString(),
               category: "",
-              ref: {},
-            });
-            reject(err);
-            return;
+              ref: {}
+            })
+            reject(err)
+            return
           }
-          resolve(docs);
+          resolve(docs)
         }
-      );
-    });
+      )
+    })
   }
 
-  getById(patient_id) {
+  getById (patient_id) {
     return new Promise((resolve, reject) => {
       this.db.query(
         `SELECT appointment_id, appointments.doctor_id, doctor_name, image, label as status, status_id, timeslot,appointments.created_at, meeting_link, 
@@ -97,18 +97,18 @@ class DoctorRepository {
               code: "REPOSITORY.DOCTOR.GET-By-ID",
               description: err.toString(),
               category: "",
-              ref: {},
-            });
-            reject(err);
-            return;
+              ref: {}
+            })
+            reject(err)
+            return
           }
-          resolve(docs);
+          resolve(docs)
         }
-      );
-    });
+      )
+    })
   }
 
-  getByDoctorId(doctor_id) {
+  getByDoctorId (doctor_id) {
     return new Promise((resolve, reject) => {
       this.db.query(
         `SELECT appointment_id, name, label as status, status_id, timeslot, appointments.created_at, meeting_link,
@@ -127,25 +127,25 @@ class DoctorRepository {
               code: "REPOSITORY.DOCTOR.GET-BY-DOCTOR-ID",
               description: err.toString(),
               category: "",
-              ref: {},
-            });
-            reject(err);
-            return;
+              ref: {}
+            })
+            reject(err)
+            return
           }
-          resolve(docs);
+          resolve(docs)
         }
-      );
-    });
+      )
+    })
   }
 
-  getUpcoming(patient_id) {
+  getUpcoming (patient_id) {
     return new Promise((resolve, reject) => {
       this.db.query(
         `SELECT appointment_id, appointments.doctor_id, doctor_name, image, label as status, status_id, timeslot,appointments.created_at, meeting_link
         FROM appointments
         LEFT JOIN doctors ON appointments.doctor_id = doctors.doctor_id
         LEFT JOIN appointment_status ON appointment_status.status_id = appointment_status
-        WHERE patient_id = ? AND DATE(timeslot) = DATE(NOW()) AND timeslot >= CURTIME() AND status_id = 2
+        WHERE patient_id = ? AND DATE(timeslot) = DATE(NOW()) AND DATE_ADD(timeslot, INTERVAL 30 MINUTE) >= CURTIME() AND status_id = 2
         ORDER BY timeslot`,
         [patient_id],
         (err, docs) => {
@@ -156,18 +156,47 @@ class DoctorRepository {
               code: "REPOSITORY.DOCTOR.GET-By-ID",
               description: err.toString(),
               category: "",
-              ref: {},
-            });
-            reject(err);
-            return;
+              ref: {}
+            })
+            reject(err)
+            return
           }
-          resolve(docs);
+          resolve(docs)
         }
-      );
-    });
+      )
+    })
   }
 
-  getByAppointmentId(appointment_id) {
+  getUpcomingDoctor (doctor_id) {
+    return new Promise((resolve, reject) => {
+      this.db.query(
+        `SELECT appointment_id, appointments.doctor_id, doctor_name, image, label as status, status_id, timeslot,appointments.created_at, meeting_link
+        FROM appointments
+        LEFT JOIN doctors ON appointments.doctor_id = doctors.doctor_id
+        LEFT JOIN appointment_status ON appointment_status.status_id = appointment_status
+        WHERE appointments.doctor_id = ? AND DATE(timeslot) = DATE(NOW()) AND DATE_ADD(timeslot, INTERVAL 30 MINUTE) >= CURTIME() AND status_id = 2
+        ORDER BY timeslot`,
+        [doctor_id],
+        (err, docs) => {
+          if (err) {
+            logger.Log({
+              level: logger.LEVEL.ERROR,
+              component: "REPOSITORY.DOCTOR",
+              code: "REPOSITORY.DOCTOR.GET-By-ID",
+              description: err.toString(),
+              category: "",
+              ref: {}
+            })
+            reject(err)
+            return
+          }
+          resolve(docs)
+        }
+      )
+    })
+  }
+
+  getByAppointmentId (appointment_id) {
     return new Promise((resolve, reject) => {
       this.db.query(
         `SELECT appointment_id, appointments.doctor_id, doctor_name, image, label as status, status_id, timeslot,appointments.created_at, meeting_link, appointments.patient_id, razorpay_payment_id FROM appointments
@@ -184,15 +213,15 @@ class DoctorRepository {
               code: "REPOSITORY.DOCTOR.GET-BY-APP-ID",
               description: err.toString(),
               category: "",
-              ref: {},
-            });
-            reject(err);
-            return;
+              ref: {}
+            })
+            reject(err)
+            return
           }
-          resolve(docs);
+          resolve(docs)
         }
-      );
-    });
+      )
+    })
   }
 
   // getById(doctor_id) {
@@ -245,6 +274,6 @@ class DoctorRepository {
   // }
 }
 
-module.exports = (db) => {
-  return new DoctorRepository(db);
-};
+module.exports = db => {
+  return new DoctorRepository(db)
+}
